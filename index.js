@@ -5,6 +5,9 @@
 
 "use strict"
 
+// const { send } = require('process');
+const zlib = require('zlib');
+
 const
     Q = require('Bluebird'),            // my workaround to nodeify didn't work, so I use bluebird for the moment
     req = require('superagent'),        // novice note: ajax API caller
@@ -84,10 +87,51 @@ function POST(me, method, data) {
     });
 }
 
+function POSTzip(me, method, data) {
+    console.log('--- POSTzip entry \r\nmethod:',method,'\r\ndata:',data);
+    let buf = '';
+    return Q.resolve(req
+        .post(me.address + method)
+        .agent(me.agent)
+        .auth(me.username, me.password)
+        .type('application/json')
+        .accept('application/zip')
+        .send(data)
+        .buffer()
+        .parse(function (res, fn) {
+            res.on('data', (chunk) => {
+                buf +=chunk;
+                console.log('Sto ricevendo dati', buf.length); // <- debug               
+            });
+            res.on('end', () =>{ 
+                console.log('termine');
+                const buff = Buffer.from(buf, "utf-8");
+                zlib.unzip(buff, (err, buff) => { 
+                    console.log('ERR: ',err);
+                    console.log('BUFF: ',buff); 
+                  }); 
+                console.log('buf: ',buf);
+            });
+        })
+    ).catch(function (err) {
+        throw new C2S.Error(method, err);
+    }).then(function (resp) {
+        console.log('--- PostZip THEN');  // <- debug
+        // console.log('resp;',resp);        // <- debug  
+        const data = resp.body.toString();
+        console.log(data);
+        // if (typeof data == 'object' && 'message' in data)
+           //  throw new C2S.Error(method, data.code, data.message);
+        return data;
+    });
+}
+
 function login(me, p) {
   const data = {};
-  if (p.username) data.username = p.username;
-  if (p.password) data.password = p.password;
+  
+        
+  if (p.username) data.username = p.username; else return Q.reject(new Error('you need to specify ‘username’'));
+  if (p.password) data.password = p.password; else return Q.reject(new Error('you need to specify ‘password’'));
   return POST(me, 'login', data).then(function (data) {
         if (data.loginSuccessful) {
             
@@ -104,7 +148,7 @@ function login(me, p) {
 
 function logout(me, p){
     const data = {};
-    if (p.token) data.token = p.token;
+    if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
     return POST(me, 'logout', data).then(function (data) {
         if (data.logoutSuccessful) {
             
@@ -126,14 +170,21 @@ function listWorkflows(me, p){
 
 function createWorkflow(me, p){
     const data = {};
-    if (p.token) data.token = p.token;
-    if (p.cid) data.cid = p.cid;
-    if (p.name) data.name = p.name;
-    if (p.steps) data.steps = p.steps;
+    if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
+    if (p.cid) data.cid = p.cid; else return Q.reject(new Error('you need to specify ‘cid’'));
+    if (p.name) data.name = p.name; else return Q.reject(new Error('you need to specify ‘name’'));
+    if (p.steps) data.steps = p.steps; else return Q.reject(new Error('you need to specify ‘steps[]’'));
     if (p.documents) data.documents = p.documents;
     if (p.attachments) data.attachments = p.attachments;
 
     return POST(me,'createWorkflow',data);
+}
+
+function downloadWorkflow(me, p){
+    const data = {};
+    if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
+    if (p.wfid) data.wfid = p.wfid; else return Q.reject(new Error('you need to specify ‘wfid’'));
+    return POSTzip(me,'downloadWorkflow',data);
 }
 
 [
@@ -141,6 +192,7 @@ function createWorkflow(me, p){
     logout,
     listWorkflows,
     createWorkflow,
+    downloadWorkflow,
 ].forEach(function (f) {
     C2S.prototype[f.name] = function (p) {
         if (typeof p != 'object')
