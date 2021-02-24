@@ -7,6 +7,7 @@
 
 // const { send } = require('process');
 const zlib = require('zlib');
+const fs = require('fs');
 
 const
     Q = require('Bluebird'),            // my workaround to nodeify didn't work, so I use bluebird for the moment
@@ -97,32 +98,33 @@ function POSTzip(me, method, data) {
         .type('application/json')
         .accept('application/zip')
         .send(data)
-        .buffer()
-        .parse(function (res, fn) {
+        .buffer(true)
+        /* .parse(function (res, fn) {   // versione vecchia Chiedere, secondo me con le funzioni a freccia esce dalla promise chain
             res.on('data', (chunk) => {
                 buf +=chunk;
-                console.log('Sto ricevendo dati', buf.length); // <- debug               
+                console.log('Sto ricevendo dati', buf.length); 
             });
             res.on('end', () =>{ 
-                console.log('termine');
-                const buff = Buffer.from(buf, "utf-8");
-                zlib.unzip(buff, (err, buff) => { 
-                    console.log('ERR: ',err);
-                    console.log('BUFF: ',buff); 
-                  }); 
-                console.log('buf: ',buf);
+                console.log('termine');                
             });
-        })
+        }) */
+        .parse(function (res, fn) {
+            var data = []; // Binary data needs binary storage
+          
+            res.on('data', function (chunk) {
+              data.push(chunk);
+              console.log('sto ricevendo dati: ',data.length);
+            });
+            res.on('end', function () {
+              fn(null, Buffer.concat(data));
+            });
+          })
     ).catch(function (err) {
         throw new C2S.Error(method, err);
     }).then(function (resp) {
         console.log('--- PostZip THEN');  // <- debug
-        // console.log('resp;',resp);        // <- debug  
-        const data = resp.body.toString();
-        console.log(data);
-        // if (typeof data == 'object' && 'message' in data)
-           //  throw new C2S.Error(method, data.code, data.message);
-        return data;
+        fs.writeFile('mio.zip', resp.body, 'binary', function(err){});
+        return resp.body;
     });
 }
 
