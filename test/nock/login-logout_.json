@@ -1,0 +1,88 @@
+[
+    {
+        "scope": "https://test11.andxor.it:443",
+        "method": "POST",
+        "path": "/c2s_test/api/login",
+        "body": {
+            "username": "f.gorla@andxor.it",
+            "password": "123456"
+        },
+        "status": 200,
+        "response": {
+            "loginSuccessful": true,
+            "token": "UGBe5ZMHL0WGFUGGLFwpFB",
+            "sessionTimeout": 1800000,
+            "user": {
+                "uid": "038a8b24-f115-1de0-fb3e-6332feba98d5",
+                "username": "f.gorla@andxor.it",
+                "firstName": "Federico",
+                "lastName": "Andxor",
+                "cf": "123456789",
+                "phone": "3405668846",
+                "isRoot": false,
+                "companies": [
+                    {
+                        "cid": "038a8b1c-b007-17c0-f1b3-d7f1e02505c7",
+                        "ticker": "AXO",
+                        "name": "Andxor Test Company",
+                        "taxcode": "123456789",
+                        "email": "f.gorla@andxor.it",
+                        "aliasPrefix": "AXO",
+                        "aliasCfSize": 5,
+                        "admin": true,
+                        "alias": "ALIASCOMPANY",
+                        "mailto": "altramail@mail.test",
+                        "download": true,
+                        "active": true
+                    }
+                ]
+            }
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx/1.18.0",
+            "Date",
+            "Thu, 25 Feb 2021 11:31:08 GMT",
+            "Content-Type",
+            "application/json;charset=UTF-8",
+            "Content-Length",
+            "551",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://test11.andxor.it:443",
+        "method": "POST",
+        "path": "/c2s_test/api/logout",
+        "body": {
+            "token": "UGBe5ZMHL0WGFUGGLFwpFB"
+        },
+        "status": 200,
+        "response": {
+            "logoutSuccessful": true
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx/1.18.0",
+            "Date",
+            "Thu, 25 Feb 2021 11:31:08 GMT",
+            "Content-Type",
+            "application/json;charset=UTF-8",
+            "Content-Length",
+            "25",
+            "Connection",
+            "keep-alive",
+            "Access-Control-Allow-Origin",
+            "*",
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization"
+        ],
+        "responseIsBinary": false
+    }
+]
