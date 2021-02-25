@@ -4,7 +4,6 @@
   "description": "Cloud2Sign REST Api Wrapper",
   "main": "index.js",
   "scripts": {
-    "oldtest": "node app.js",
     "test": "node test/test.js local | tap-spec",
     "test-update": "rm -rf test/nock ; node test/test.js | tap-spec"
   },
