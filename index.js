@@ -5,16 +5,11 @@
 
 "use strict"
 
-// const { send } = require('process');
-const zlib = require('zlib');
-const fs = require('fs');
-
 const
-    Q = require('Bluebird'),            // my workaround to nodeify didn't work, so I use bluebird for the moment
-    req = require('superagent'),        // novice note: ajax API caller
-    reProto = /^(https?):/,             // novice note: regular expression for protocol check
-    crypto = require('crypto'),         // don't know if it's necessary
-    reEtag = /^"([0-9A-F]+)[-"]/;       // idem
+    Q = require('Bluebird'),            // I use bluebird for the moment
+    reProto = /^(https?):/,             // regular expression for protocol check
+    req = require('superagent');        // ajax API caller
+    
 
 function C2S(address, username, password) {
     this.address = address.replace(/\/?$/, '/');
@@ -89,8 +84,6 @@ function POST(me, method, data) {
 }
 
 function POSTzip(me, method, data) {
-    console.log('--- POSTzip entry \r\nmethod:',method,'\r\ndata:',data);
-    let buf = '';
     return Q.resolve(req
         .post(me.address + method)
         .agent(me.agent)
@@ -99,51 +92,26 @@ function POSTzip(me, method, data) {
         .accept('application/zip')
         .send(data)
         .buffer(true)
-        /* .parse(function (res, fn) {   // versione vecchia Chiedere, secondo me con le funzioni a freccia esce dalla promise chain
-            res.on('data', (chunk) => {
-                buf +=chunk;
-                console.log('Sto ricevendo dati', buf.length); 
-            });
-            res.on('end', () =>{ 
-                console.log('termine');                
-            });
-        }) */
-        .parse(function (res, fn) {
-            var data = []; // Binary data needs binary storage
-          
-            res.on('data', function (chunk) {
-              data.push(chunk);
-              console.log('sto ricevendo dati: ',data.length);
-            });
-            res.on('end', function () {
-              fn(null, Buffer.concat(data));
-            });
-          })
+        .parse(req.parse.image)
     ).catch(function (err) {
         throw new C2S.Error(method, err);
     }).then(function (resp) {
-        console.log('--- PostZip THEN');  // <- debug
-        fs.writeFile('mio.zip', resp.body, 'binary', function(err){});
         return resp.body;
     });
 }
 
 function login(me, p) {
   const data = {};
-  
-        
   if (p.username) data.username = p.username; else return Q.reject(new Error('you need to specify ‘username’'));
   if (p.password) data.password = p.password; else return Q.reject(new Error('you need to specify ‘password’'));
   return POST(me, 'login', data).then(function (data) {
         if (data.loginSuccessful) {
-            
             p.token = data.token;
             me.token = p.token;
         } else {
             p.token = undefined;
             me.token = undefined;
         }
-        
         return data;    
   });
 }
@@ -153,7 +121,6 @@ function logout(me, p){
     if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
     return POST(me, 'logout', data).then(function (data) {
         if (data.logoutSuccessful) {
-            
             me.token = undefined;
             p.token = undefined;
         }
@@ -163,9 +130,10 @@ function logout(me, p){
 
 function listWorkflows(me, p){
     const data = {};
-    if (p.token) data.token = p.token;
-    if (p.cid) data.cid = p.cid;
-    if (p.dateMin) data.dateMin = p.dateMin;
+    if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
+    if (p.cid) data.cid = p.cid; else return Q.reject(new Error('you need to specify ‘cid’'));
+    if (p.dateMin) data.dateMin = p.dateMin; else return Q.reject(new Error('at leaste ‘dateMin’ is mandatory field'));
+    if (p.dateMax) data.date;ax = p.dateMax;
     if (p.meta) data.meta = p.meta;
     return POST(me,'listWorkflows',data);
 }
