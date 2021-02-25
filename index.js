@@ -3,7 +3,7 @@
 * (c) 2021 andxor srl
 */
 
-"use strict"
+'use strict'
 
 const
     Q = require('Bluebird'),            // I use bluebird for the moment
@@ -133,7 +133,7 @@ function listWorkflows(me, p){
     if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
     if (p.cid) data.cid = p.cid; else return Q.reject(new Error('you need to specify ‘cid’'));
     if (p.dateMin) data.dateMin = p.dateMin; else return Q.reject(new Error('at leaste ‘dateMin’ is mandatory field'));
-    if (p.dateMax) data.date;ax = p.dateMax;
+    if (p.dateMax) data.dateMax = p.dateMax;
     if (p.meta) data.meta = p.meta;
     return POST(me,'listWorkflows',data);
 }
