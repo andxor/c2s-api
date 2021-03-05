@@ -3,13 +3,13 @@
 * (c) 2021 andxor srl
 */
 
-'use strict'
+'use strict';
 
 const
     Q = require('Bluebird'),            // I use bluebird for the moment
     reProto = /^(https?):/,             // regular expression for protocol check
     req = require('superagent');        // ajax API caller
-    
+
 
 function C2S(address, username, password) {
     this.address = address.replace(/\/?$/, '/');
@@ -22,13 +22,13 @@ function C2S(address, username, password) {
         keepAlive: true,
         keepAliveMsecs: 5000,
         maxSockets: 4,
-    }); 
+    });
 }
 
 C2S.Error = function(method, err) {
     // like the one in TDoc-api, this too is inspired by: http://stackoverflow.com/a/8460753/166524
     if ('captureStackTrace' in Error)
-    Error.captureStackTrace(this, this.constructor);
+        Error.captureStackTrace(this, this.constructor);
     this.name = 'c2s.Error';
     this.method = method;
     this.status = 0 | err.status;
@@ -42,11 +42,11 @@ C2S.Error = function(method, err) {
     this.code = 0 | err.code;
     this.message = err.message;
     this.additional = err.additional || [];
-}
+};
 
 C2S.Error.prototype = Object.create(Error.prototype);
 C2S.Error.prototype.constructor = C2S.Error;
-   
+
 
 function POST(me, method, data) {
     return Q.resolve(req
@@ -83,13 +83,13 @@ function POSTzip(me, method, data) {
 }
 
 function login(me, p) {
-  const data = {};
-  if (p.username) data.username = p.username; else return Q.reject(new Error('you need to specify ‘username’'));
-  if (p.password) data.password = p.password; else return Q.reject(new Error('you need to specify ‘password’'));
-  return POST(me, 'login', data).then(function (data) {
+    const data = {};
+    if (p.username) data.username = p.username; else return Q.reject(new Error('you need to specify ‘username’'));
+    if (p.password) data.password = p.password; else return Q.reject(new Error('you need to specify ‘password’'));
+    return POST(me, 'login', data).then(function (data) {
         if (!data.loginSuccessful) throw new C2S.Error('Cannot Log In');
-        return data;    
-  });
+        return data;
+    });
 }
 
 function logout(me, p){
@@ -146,4 +146,4 @@ function downloadWorkflow(me, p){
     };
 });
 
-module.exports = C2S;    
+module.exports = C2S;

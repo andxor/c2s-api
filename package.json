@@ -25,5 +25,26 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.9.2",
     "tape-nock": "^1.6.1"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "rules": {
+      "strict": [ "error", "global" ],
+      "indent": [ "warn", 4 ],
+      "linebreak-style": [ "warn", "unix" ],
+      "quotes": [ "warn", "single" ],
+      "semi": [ "warn", "always" ],
+      "comma-dangle": [ "error", "always-multiline" ],
+      "no-trailing-spaces": "warn",
+      "no-unused-vars": "warn"
+    }
   }
 }
