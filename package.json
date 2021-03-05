@@ -1,6 +1,6 @@
 {
   "name": "c2s-api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Cloud2Sign REST API wrapper",
   "main": "index.js",
   "homepage": "https://github.com/andxor/c2s-api#readme",
@@ -13,6 +13,9 @@
   },
   "author": "Riccardo Deserti <r.deserti@andxor.it>",
   "license": "ISC",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "node test/test.js local | tap-spec",
     "test-update": "rm -rf test/nock ; node test/test.js | tap-spec"
