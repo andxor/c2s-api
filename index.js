@@ -48,24 +48,6 @@ C2S.Error.prototype = Object.create(Error.prototype);
 C2S.Error.prototype.constructor = C2S.Error;
    
 
-function GET(me, method, data) {
-    return Q.resolve(req
-        .get(me.address + method)
-        .agent(me.agent)
-        .auth(me.username, me.password)
-        .query(data)
-    ).catch(function (err) {
-        throw new C2S.Error(method, err);
-    }).then(function (resp) {
-        const data = resp.body;
-        if (typeof data == 'object' && 'message' in data)
-            throw new C2S.Error(method, resp);
-        if (resp.status >= 400)
-            throw new C2S.Error(method, resp);
-        return data;
-    });
-}
-
 function POST(me, method, data) {
     return Q.resolve(req
         .post(me.address + method)
@@ -105,13 +87,7 @@ function login(me, p) {
   if (p.username) data.username = p.username; else return Q.reject(new Error('you need to specify ‘username’'));
   if (p.password) data.password = p.password; else return Q.reject(new Error('you need to specify ‘password’'));
   return POST(me, 'login', data).then(function (data) {
-        if (data.loginSuccessful) {
-            p.token = data.token;
-            me.token = p.token;
-        } else {
-            p.token = undefined;
-            me.token = undefined;
-        }
+        if (!data.loginSuccessful) throw new C2S.Error('Cannot Log In');
         return data;    
   });
 }
@@ -120,10 +96,7 @@ function logout(me, p){
     const data = {};
     if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
     return POST(me, 'logout', data).then(function (data) {
-        if (data.logoutSuccessful) {
-            me.token = undefined;
-            p.token = undefined;
-        }
+        if (!data.logoutSuccessful) throw new C2S.Error('Error logging out');
         return data;
     });
 }
@@ -138,17 +111,19 @@ function listWorkflows(me, p){
     return POST(me,'listWorkflows',data);
 }
 
-function createWorkflow(me, p){
+// non-tested function
+
+/* function createWorkflow(me, p){
     const data = {};
     if (p.token) data.token = p.token; else return Q.reject(new Error('you need to specify ‘token’'));
     if (p.cid) data.cid = p.cid; else return Q.reject(new Error('you need to specify ‘cid’'));
     if (p.name) data.name = p.name; else return Q.reject(new Error('you need to specify ‘name’'));
     if (p.steps) data.steps = p.steps; else return Q.reject(new Error('you need to specify ‘steps[]’'));
     if (p.documents) data.documents = p.documents;
-    if (p.attachments) data.attachments = p.attachments;
+    if (p.atachments) data.attachments = p.attachments;
 
     return POST(me,'createWorkflow',data);
-}
+} */
 
 function downloadWorkflow(me, p){
     const data = {};
@@ -161,7 +136,7 @@ function downloadWorkflow(me, p){
     login,
     logout,
     listWorkflows,
-    createWorkflow,
+    // createWorkflow,
     downloadWorkflow,
 ].forEach(function (f) {
     C2S.prototype[f.name] = function (p) {
