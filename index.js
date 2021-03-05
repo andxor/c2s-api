@@ -6,7 +6,7 @@
 'use strict';
 
 const
-    Q = require('Bluebird'),            // I use bluebird for the moment
+    Q = require('bluebird'),            // I use bluebird for the moment
     reProto = /^(https?):/,             // regular expression for protocol check
     req = require('superagent');        // ajax API caller
 
