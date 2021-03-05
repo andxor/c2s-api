@@ -1,22 +1,22 @@
 {
   "name": "c2s-api",
   "version": "0.0.0",
-  "description": "Cloud2Sign REST Api Wrapper",
+  "description": "Cloud2Sign REST API wrapper",
   "main": "index.js",
-  "scripts": {
-    "test": "node test/test.js local | tap-spec",
-    "test-update": "rm -rf test/nock ; node test/test.js | tap-spec"
-  },
+  "homepage": "https://github.com/andxor/c2s-api#readme",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/andxor/c2s-api.git"
   },
-  "author": "rdeserti",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/andxor/c2s-api/issues"
   },
-  "homepage": "https://github.com/andxor/c2s-api#readme",
+  "author": "Riccardo Deserti <r.deserti@andxor.it>",
+  "license": "ISC",
+  "scripts": {
+    "test": "node test/test.js local | tap-spec",
+    "test-update": "rm -rf test/nock ; node test/test.js | tap-spec"
+  },
   "dependencies": {
     "bluebird": "^3.7.2",
     "superagent": "^6.1.0"
