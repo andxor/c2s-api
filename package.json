@@ -1,6 +1,6 @@
 {
   "name": "c2s-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cloud2Sign REST API wrapper",
   "main": "index.js",
   "homepage": "https://github.com/andxor/c2s-api#readme",
@@ -17,16 +17,16 @@
     "index.js"
   ],
   "scripts": {
-    "test": "node test/test.js local | tap-spec",
-    "test-update": "rm -rf test/nock ; node test/test.js | tap-spec"
+    "test": "node test/test.js local | tap-arc",
+    "test-update": "rm -rf test/nock ; node test/test.js | tap-arc"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "superagent": "^6.1.0"
+    "superagent": "^8.0.6"
   },
   "devDependencies": {
-    "tap-spec": "^5.0.0",
-    "tape": "^4.9.2",
+    "tap-arc": "^0.3.5",
+    "tape": "^4.16.1",
     "tape-nock": "^1.6.1"
   },
   "eslintConfig": {
