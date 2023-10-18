@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "superagent": "^8.0.6"
+    "superagent": "^8.1.2"
   },
   "devDependencies": {
     "tap-arc": "^0.3.5",
@@ -48,6 +48,11 @@
       "comma-dangle": [ "error", "always-multiline" ],
       "no-trailing-spaces": "warn",
       "no-unused-vars": "warn"
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "semver@>=7.0.0 <7.5.2": ">=7.5.2"
     }
   }
 }
