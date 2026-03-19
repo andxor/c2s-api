@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "tap-arc": "^0.3.5",
-    "tape": "^4.16.1",
-    "tape-nock": "^1.6.1"
+    "tape": "^4.17.0",
+    "tape-nock": "^1.7.0"
   },
   "eslintConfig": {
     "parserOptions": {
